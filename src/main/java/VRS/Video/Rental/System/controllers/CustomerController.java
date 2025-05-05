@@ -1,15 +1,16 @@
-package Controllers;
+package VRS.Video.Rental.System.controllers;
 
-import Entities.Customer;
-import Entities.Videos;
-import Services.CustomerService;
+import VRS.Video.Rental.System.entities.Customer;
+import VRS.Video.Rental.System.entities.Videos;
+import VRS.Video.Rental.System.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "")
+@RequestMapping("/api/v1/customer")
 public class CustomerController {
     private final CustomerService customerService;
 
@@ -18,24 +19,32 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping
+    @GetMapping("/allVideos")
     public List<Videos> getAllVideos(){
         return customerService.getAllVideos();
     }
-    @GetMapping
+
+    @GetMapping("/video")
     public Videos getVideo(@RequestParam (value = "video_name", required = true) String video_name){
         return customerService.getVideo(video_name);
     }
 
-    @PostMapping
+    @GetMapping("/myProfile")
+    public Customer viewProfile(@RequestParam(value = "fullName", required = true) String fullName){
+        return customerService.viewProfile(fullName);
+    }
+
+    @PostMapping("/registration")
     public void customerRegistration(@RequestBody Customer customer){
         customerService.addNewCustomer(customer);
     }
 
-    @PostMapping
-    public Videos rentVideo(
-            @RequestParam (value = "videoName", required = true) String videoName,
-            @RequestParam (value = "name", required = true) String name){
+    @PostMapping("/rent")
+    public ResponseEntity<String> rentVideo(
+            @RequestParam(value = "videoName", required = true) String videoName,
+            @RequestParam(value = "name", required = true) String name) {
+
         return customerService.rentVideo(videoName, name);
     }
+
 }

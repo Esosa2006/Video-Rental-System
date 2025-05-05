@@ -1,4 +1,4 @@
-package Dtos;
+package VRS.Video.Rental.System.dtos;
 
 public class CustomerDto {
     private String fullName;

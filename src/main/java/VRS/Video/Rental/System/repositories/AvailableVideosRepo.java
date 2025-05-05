@@ -1,6 +1,6 @@
-package Repositories;
+package VRS.Video.Rental.System.repositories;
 
-import Entities.Videos;
+import VRS.Video.Rental.System.entities.Videos;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
