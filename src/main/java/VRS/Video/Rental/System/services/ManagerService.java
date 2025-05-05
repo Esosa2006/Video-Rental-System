@@ -1,7 +1,6 @@
 package VRS.Video.Rental.System.services;
 
 import VRS.Video.Rental.System.entities.Customer;
-import VRS.Video.Rental.System.entities.Store;
 import VRS.Video.Rental.System.entities.Videos;
 import VRS.Video.Rental.System.exceptions.GlobalRuntimeException;
 import VRS.Video.Rental.System.repositories.AvailableVideosRepo;
@@ -19,14 +18,14 @@ public class ManagerService{
     private final CustomerRepository customerRepository;
     private final RentedVideosRepo rentedVideosRepo;
     private final AvailableVideosRepo availableVideosRepo;
-    private final Store store;
+    private final StoreService storeService;
 
     @Autowired
-    public ManagerService(CustomerRepository customerRepository, RentedVideosRepo rentedVideosRepo, AvailableVideosRepo availableVideosRepo, Store store) {
+    public ManagerService(CustomerRepository customerRepository, RentedVideosRepo rentedVideosRepo, AvailableVideosRepo availableVideosRepo, StoreService storeService) {
         this.customerRepository = customerRepository;
         this.rentedVideosRepo = rentedVideosRepo;
         this.availableVideosRepo = availableVideosRepo;
-        this.store = store;
+        this.storeService = storeService;
     }
 
     public List<Customer> viewAllCustomers() {
@@ -34,7 +33,7 @@ public class ManagerService{
     }
 
     public Integer checkStoreFunds() {
-        return store.getStore_funds();
+        return storeService.getStore_funds();
     }
 
     public List<Videos> getRentedVideos() {

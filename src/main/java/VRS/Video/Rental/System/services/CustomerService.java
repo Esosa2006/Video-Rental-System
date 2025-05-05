@@ -1,7 +1,6 @@
 package VRS.Video.Rental.System.services;
 
 import VRS.Video.Rental.System.entities.Customer;
-import VRS.Video.Rental.System.entities.Store;
 import VRS.Video.Rental.System.entities.Videos;
 import VRS.Video.Rental.System.enums.AvailabilityStatus;
 import VRS.Video.Rental.System.exceptions.GlobalRuntimeException;
@@ -20,14 +19,14 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AvailableVideosRepo availableVideosRepo;
     private final RentedVideosRepo rentedVideosRepo;
-    private final Store store;
+    private final StoreService storeService;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository, AvailableVideosRepo availableVideosRepo, RentedVideosRepo rentedVideosRepo, Store store) {
+    public CustomerService(CustomerRepository customerRepository, AvailableVideosRepo availableVideosRepo, RentedVideosRepo rentedVideosRepo, StoreService storeService) {
         this.customerRepository = customerRepository;
         this.availableVideosRepo = availableVideosRepo;
         this.rentedVideosRepo = rentedVideosRepo;
-        this.store = store;
+        this.storeService = storeService;
     }
 
     public List<Videos> getAllVideos() {
@@ -51,7 +50,6 @@ public class CustomerService {
 
         Integer price = video.getPrice();
         Integer balance = customer.getAccount_balance();
-        Integer store_bal = store.getStore_funds();
         Integer rented_qty = video.getRented_quantity();
         if (balance < price) {
             throw new GlobalRuntimeException("Insufficient funds.");
@@ -59,7 +57,7 @@ public class CustomerService {
         else{
         customer.setAccount_balance(balance - price);
         video.setQuantity(video.getQuantity() - 1);
-        store.setStore_funds(store_bal + price);
+        storeService.addStoreFunds(price);
         video.setRented_quantity(rented_qty + 1);
         }
         rentedVideosRepo.save(video);
