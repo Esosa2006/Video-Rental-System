@@ -63,7 +63,6 @@ public class CustomerService {
         rentedVideosRepo.save(video);
         customerRepository.save(customer);
         availableVideosRepo.save(video);
-
         return ResponseEntity.ok("Enjoy your video");
     }
 
@@ -72,6 +71,10 @@ public class CustomerService {
     }
 
     public void addNewCustomer(Customer customer) {
+        Customer existingCustomer = customerRepository.findByemail(customer.getEmail());
+        if(existingCustomer != null){
+            throw new GlobalRuntimeException("Customer already exists!");
+        }
         customerRepository.save(customer);
     }
 

@@ -34,15 +34,15 @@ public class CustomerController {
     }
 
     @PostMapping("/registration")
-    public void customerRegistration(@RequestBody Customer customer){
+    public ResponseEntity<String> customerRegistration(@RequestBody Customer customer){
         customerService.addNewCustomer(customer);
+        return ResponseEntity.ok("Your profile has successfully been registered");
     }
 
     @PostMapping("/rent")
     public ResponseEntity<String> rentVideo(
             @RequestParam(value = "videoName", required = true) String videoName,
             @RequestParam(value = "name", required = true) String name) {
-
         return customerService.rentVideo(videoName, name);
     }
 
