@@ -1,7 +1,7 @@
 package VRS.Video.Rental.System.services;
 
 import VRS.Video.Rental.System.entities.Customer;
-import VRS.Video.Rental.System.entities.Videos;
+import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.exceptions.GlobalRuntimeException;
 import VRS.Video.Rental.System.repositories.AvailableVideosRepo;
 import VRS.Video.Rental.System.repositories.CustomerRepository;
@@ -36,16 +36,17 @@ public class ManagerService{
         return storeService.getStore_funds();
     }
 
-    public List<Videos> getRentedVideos() {
+    public List<Video> getRentedVideos() {
         return rentedVideosRepo.findAll();
     }
 
-    public Videos addNewVideo(Videos video) {
+    public Video addNewVideo(Video video) {
+        video.checkIfAvailable();
         return availableVideosRepo.save(video);
     }
 
-    public ResponseEntity<Videos> editVideoDetails(Long id, Map<String, Object> updates) {
-        Videos video = availableVideosRepo.findById(id).orElseThrow(() -> new GlobalRuntimeException("Video not found"));
+    public ResponseEntity<Video> editVideoDetails(Long id, Map<String, Object> updates) {
+        Video video = availableVideosRepo.findById(id).orElseThrow(() -> new GlobalRuntimeException("Video not found"));
         if(updates.containsKey("name")){
             video.setName(String.valueOf(updates.get("name")));
         }
@@ -59,7 +60,7 @@ public class ManagerService{
     }
 
     public void deleteVideo(String name) {
-        Videos video = availableVideosRepo.findByName(name);
+        Video video = availableVideosRepo.findByName(name);
         if(!video.getName().isEmpty()){
             availableVideosRepo.delete(video);
         }

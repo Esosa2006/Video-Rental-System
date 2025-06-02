@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
-public class Videos {
+public class Video {
     @Id
     @SequenceGenerator(
             name = "my_sequence_generator", sequenceName = "my_sequence", allocationSize = 1

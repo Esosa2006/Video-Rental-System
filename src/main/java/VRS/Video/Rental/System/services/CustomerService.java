@@ -1,9 +1,10 @@
 package VRS.Video.Rental.System.services;
 
 import VRS.Video.Rental.System.entities.Customer;
-import VRS.Video.Rental.System.entities.Videos;
+import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.enums.AvailabilityStatus;
 import VRS.Video.Rental.System.exceptions.GlobalRuntimeException;
+import VRS.Video.Rental.System.mail.EmailSenderService;
 import org.springframework.http.ResponseEntity;
 import VRS.Video.Rental.System.repositories.AvailableVideosRepo;
 import VRS.Video.Rental.System.repositories.CustomerRepository;
@@ -20,6 +21,7 @@ public class CustomerService {
     private final AvailableVideosRepo availableVideosRepo;
     private final RentedVideosRepo rentedVideosRepo;
     private final StoreService storeService;
+    private EmailSenderService emailSenderService;
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository, AvailableVideosRepo availableVideosRepo, RentedVideosRepo rentedVideosRepo, StoreService storeService) {
@@ -29,17 +31,17 @@ public class CustomerService {
         this.storeService = storeService;
     }
 
-    public List<Videos> getAllVideos() {
+    public List<Video> getAllVideos() {
         return availableVideosRepo.findAll();
     }
 
     public ResponseEntity<String> rentVideo(String videoName, String name) {
         Customer customer = customerRepository.findByfullName(name);
         if (customer == null) {
-            throw new GlobalRuntimeException("Customer not found. Please register.");
+            throw new GlobalRuntimeException("Customer not found, Please register.");
         }
 
-        Videos video = availableVideosRepo.findByName(videoName);
+        Video video = availableVideosRepo.findByName(videoName);
         if (video == null) {
             throw new GlobalRuntimeException("Video not found.");
         }
@@ -66,7 +68,7 @@ public class CustomerService {
         return ResponseEntity.ok("Enjoy your video");
     }
 
-    public Videos getVideo(String name) {
+    public Video getVideo(String name) {
         return availableVideosRepo.findByName(name);
     }
 
@@ -76,6 +78,9 @@ public class CustomerService {
             throw new GlobalRuntimeException("Customer already exists!");
         }
         customerRepository.save(customer);
+        emailSenderService.sendEmail(customer.getEmail(),
+                "Welcome!!",
+                "You are now officially a member of this Video Store!");
     }
 
     public Customer viewProfile(String fullName) {
@@ -83,6 +88,7 @@ public class CustomerService {
         if(!customer.getFullName().isEmpty()){
             return customer;
         }
+
         throw new GlobalRuntimeException("Customer Not Found");
     }
 }

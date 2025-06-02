@@ -1,8 +1,9 @@
 package VRS.Video.Rental.System.controllers;
 
 import VRS.Video.Rental.System.entities.Customer;
-import VRS.Video.Rental.System.entities.Videos;
+import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.services.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +20,12 @@ public class CustomerController {
     }
 
     @GetMapping("/allVideos")
-    public List<Videos> getAllVideos(){
+    public List<Video> getAllVideos(){
         return customerService.getAllVideos();
     }
 
     @GetMapping("/video")
-    public Videos getVideo(@RequestParam (value = "video_name", required = true) String video_name){
+    public Video getVideo(@RequestParam (value = "video_name", required = true) String video_name){
         return customerService.getVideo(video_name);
     }
 
@@ -34,7 +35,7 @@ public class CustomerController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<String> customerRegistration(@RequestBody Customer customer){
+    public ResponseEntity<String> customerRegistration(@Valid @RequestBody Customer customer){
         customerService.addNewCustomer(customer);
         return ResponseEntity.ok("Your profile has successfully been registered");
     }
