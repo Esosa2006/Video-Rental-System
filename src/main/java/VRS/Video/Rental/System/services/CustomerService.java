@@ -94,7 +94,7 @@ public class CustomerService {
 
     public Customer viewProfile(String fullName) {
         Customer customer = customerRepository.findByfullName(fullName);
-        if(!customer.getFullName().isEmpty()){
+        if(!customer.getFullName().isEmpty()) {
             return customer;
         }
         throw new CustomerNotFoundException("Customer Not Found");
