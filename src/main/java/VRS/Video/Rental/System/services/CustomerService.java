@@ -4,6 +4,11 @@ import VRS.Video.Rental.System.entities.Customer;
 import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.enums.AvailabilityStatus;
 import VRS.Video.Rental.System.exceptions.GlobalRuntimeException;
+import VRS.Video.Rental.System.exceptions.customerExceptions.CustomerAlreadyExistsException;
+import VRS.Video.Rental.System.exceptions.customerExceptions.CustomerNotFoundException;
+import VRS.Video.Rental.System.exceptions.customerExceptions.InsufficientFundsException;
+import VRS.Video.Rental.System.exceptions.videoExceptions.OutOfStockException;
+import VRS.Video.Rental.System.exceptions.videoExceptions.VideoNotFoundException;
 import VRS.Video.Rental.System.mail.EmailSenderService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,23 +47,23 @@ public class CustomerService {
     public ResponseEntity<String> rentVideo(String videoName, String name) {
         Customer customer = customerRepository.findByfullName(name);
         if (customer == null) {
-            throw new GlobalRuntimeException("Customer not found, Please register.");
+            throw new CustomerNotFoundException("Customer not found, Please register.");
         }
 
         Video video = availableVideosRepo.findByName(videoName);
         if (video == null) {
-            throw new GlobalRuntimeException("Video not found.");
+            throw new VideoNotFoundException("Video not found.");
         }
 
         if (video.getAvailabilityStatus() == AvailabilityStatus.NOT_AVAILABLE) {
-            throw new GlobalRuntimeException("Sorry, this video is currently out of stock.");
+            throw new OutOfStockException("Sorry, this video is currently out of stock.");
         }
 
         Integer price = video.getPrice();
         Integer balance = customer.getAccount_balance();
         Integer rented_qty = video.getRented_quantity();
         if (balance < price) {
-            throw new GlobalRuntimeException("Insufficient funds.");
+            throw new InsufficientFundsException("Insufficient funds.");
         }
         else{
         customer.setAccount_balance(balance - price);
@@ -79,7 +84,7 @@ public class CustomerService {
     public void addNewCustomer(Customer customer) {
         Customer existingCustomer = customerRepository.findByemail(customer.getEmail());
         if(existingCustomer != null){
-            throw new GlobalRuntimeException("Customer already exists!");
+            throw new CustomerAlreadyExistsException("Customer already exists!");
         }
         customerRepository.save(customer);
         emailSenderService.sendEmail(customer.getEmail(),
@@ -92,6 +97,6 @@ public class CustomerService {
         if(!customer.getFullName().isEmpty()){
             return customer;
         }
-        throw new GlobalRuntimeException("Customer Not Found");
+        throw new CustomerNotFoundException("Customer Not Found");
     }
 }

@@ -3,6 +3,7 @@ package VRS.Video.Rental.System.services;
 import VRS.Video.Rental.System.entities.Customer;
 import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.exceptions.GlobalRuntimeException;
+import VRS.Video.Rental.System.exceptions.videoExceptions.VideoNotFoundException;
 import VRS.Video.Rental.System.repositories.AvailableVideosRepo;
 import VRS.Video.Rental.System.repositories.CustomerRepository;
 import VRS.Video.Rental.System.repositories.RentedVideosRepo;
@@ -50,7 +51,7 @@ public class ManagerService{
     }
 
     public ResponseEntity<Video> editVideoDetails(Long id, Map<String, Object> updates) {
-        Video video = availableVideosRepo.findById(id).orElseThrow(() -> new GlobalRuntimeException("Video not found"));
+        Video video = availableVideosRepo.findById(id).orElseThrow(() -> new VideoNotFoundException("Video not found"));
         if(updates.containsKey("name")){
             video.setName(String.valueOf(updates.get("name")));
         }
@@ -68,6 +69,6 @@ public class ManagerService{
         if(!video.getName().isEmpty()){
             availableVideosRepo.delete(video);
         }
-        throw new GlobalRuntimeException("Video not found");
+        throw new VideoNotFoundException("Video not found");
     }
 }
