@@ -5,6 +5,9 @@ import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.enums.AvailabilityStatus;
 import VRS.Video.Rental.System.exceptions.GlobalRuntimeException;
 import VRS.Video.Rental.System.mail.EmailSenderService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import VRS.Video.Rental.System.repositories.AvailableVideosRepo;
 import VRS.Video.Rental.System.repositories.CustomerRepository;
@@ -31,8 +34,9 @@ public class CustomerService {
         this.storeService = storeService;
     }
 
-    public List<Video> getAllVideos() {
-        return availableVideosRepo.findAll();
+    public Page<Video> getAllVideos(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return availableVideosRepo.findAll(pageable);
     }
 
     public ResponseEntity<String> rentVideo(String videoName, String name) {

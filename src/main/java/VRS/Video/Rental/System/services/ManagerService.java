@@ -7,6 +7,9 @@ import VRS.Video.Rental.System.repositories.AvailableVideosRepo;
 import VRS.Video.Rental.System.repositories.CustomerRepository;
 import VRS.Video.Rental.System.repositories.RentedVideosRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +31,9 @@ public class ManagerService{
         this.storeService = storeService;
     }
 
-    public List<Customer> viewAllCustomers() {
-        return customerRepository.findAll();
+    public Page<Customer> viewAllCustomers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return customerRepository.findAll(pageable);
     }
 
     public Integer checkStoreFunds() {

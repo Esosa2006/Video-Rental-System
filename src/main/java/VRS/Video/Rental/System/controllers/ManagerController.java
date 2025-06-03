@@ -5,6 +5,7 @@ import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.services.CustomerService;
 import VRS.Video.Rental.System.services.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +27,9 @@ public class ManagerController {
 
     //Customer Management
     @GetMapping("/profiles")
-    public List<Customer> viewAllCustomers(){
-        return managerService.viewAllCustomers();
+    public Page<Customer> viewAllCustomers(@RequestParam (defaultValue = "0") int page,
+                                           @RequestParam (defaultValue = "10") int size){
+        return managerService.viewAllCustomers(page, size);
     }
 
     //Inventory Management
@@ -37,8 +39,9 @@ public class ManagerController {
     }
 
     @GetMapping("/inventory/available")
-    public List<Video> getAvailableVideos(){
-        return customerService.getAllVideos();
+    public Page<Video> getAvailableVideos(@RequestParam (defaultValue = "0") int page,
+                                          @RequestParam (defaultValue = "5") int size){
+        return customerService.getAllVideos(page, size);
     }
 
     @GetMapping("/inventory/video")
