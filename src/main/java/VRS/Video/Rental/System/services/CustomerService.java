@@ -15,7 +15,6 @@ import VRS.Video.Rental.System.repositories.RentedVideosRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public class CustomerService {
@@ -24,14 +23,15 @@ public class CustomerService {
     private final AvailableVideosRepo availableVideosRepo;
     private final RentedVideosRepo rentedVideosRepo;
     private final StoreService storeService;
-    private EmailSenderService emailSenderService;
+    private final EmailSenderService emailSenderService;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository, AvailableVideosRepo availableVideosRepo, RentedVideosRepo rentedVideosRepo, StoreService storeService) {
+    public CustomerService(CustomerRepository customerRepository, AvailableVideosRepo availableVideosRepo, RentedVideosRepo rentedVideosRepo, StoreService storeService, EmailSenderService emailSenderService) {
         this.customerRepository = customerRepository;
         this.availableVideosRepo = availableVideosRepo;
         this.rentedVideosRepo = rentedVideosRepo;
         this.storeService = storeService;
+        this.emailSenderService = emailSenderService;
     }
 
     public Page<Video> getAllVideos(int page, int size) {
@@ -92,7 +92,6 @@ public class CustomerService {
         if(!customer.getFullName().isEmpty()){
             return customer;
         }
-
         throw new GlobalRuntimeException("Customer Not Found");
     }
 }
