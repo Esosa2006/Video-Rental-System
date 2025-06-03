@@ -2,6 +2,7 @@ package VRS.Video.Rental.System.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class Customer {
     @Column(name = "email", unique = true)
     private String email;
     @Column(name = "age")
+    @Min(value = 18, message = "Must be at least 18 years old")
     private Integer age;
     @NotBlank(message = "Account Balance required!")
     private Integer account_balance;
