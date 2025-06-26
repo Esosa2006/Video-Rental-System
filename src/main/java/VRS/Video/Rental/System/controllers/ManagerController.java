@@ -1,5 +1,6 @@
 package VRS.Video.Rental.System.controllers;
 
+import VRS.Video.Rental.System.dtos.VideoRegistrationDto;
 import VRS.Video.Rental.System.entities.Customer;
 import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.services.CustomerService;
@@ -55,8 +56,8 @@ public class ManagerController {
     }
 
     @PostMapping("/inventory/add")
-    public ResponseEntity<Video> addNewVideo(@RequestBody Video video){
-        Video added = managerService.addNewVideo(video);
+    public ResponseEntity<Video> addNewVideo(@RequestBody VideoRegistrationDto videoRegistrationDto){
+        Video added = managerService.addNewVideo(videoRegistrationDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(added);
     }
 

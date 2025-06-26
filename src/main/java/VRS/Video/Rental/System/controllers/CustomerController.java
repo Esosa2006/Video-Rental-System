@@ -1,5 +1,6 @@
 package VRS.Video.Rental.System.controllers;
 
+import VRS.Video.Rental.System.dtos.CustomerRegistrationDto;
 import VRS.Video.Rental.System.entities.Customer;
 import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.services.CustomerService;
@@ -36,8 +37,8 @@ public class CustomerController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<String> customerRegistration(@Valid @RequestBody Customer customer){
-        customerService.addNewCustomer(customer);
+    public ResponseEntity<String> customerRegistration(@Valid @RequestBody CustomerRegistrationDto customerRegistrationDto){
+        customerService.addNewCustomer(customerRegistrationDto);
         return ResponseEntity.ok("Your profile has successfully been registered");
     }
 

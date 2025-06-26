@@ -22,16 +22,13 @@ public class Customer {
             strategy = GenerationType.SEQUENCE, generator = "my_sequence_generator"
     )
     private Long Id;
-    @NotBlank(message = "Username required!")
     @Column(name = "fullName")
     private String fullName;
-    @Email(message = "Email format is invalid!")
     @Column(name = "email", unique = true)
     private String email;
     @Column(name = "age")
-    @Min(value = 18, message = "Must be at least 18 years old")
     private Integer age;
-    @NotBlank(message = "Account Balance required!")
+    @Column(name = "account_balance")
     private Integer account_balance;
 
 }

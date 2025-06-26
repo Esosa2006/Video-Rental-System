@@ -20,14 +20,19 @@ public class Video {
             strategy = GenerationType.SEQUENCE, generator = "my_sequence_generator"
     )
     private Long id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "price")
     private Integer price;
+    @Column(name = "quantity")
     private Integer quantity;
+    @Column(name = "rented_quantity")
     private Integer rented_quantity;
     @Transient
+    @Column(name = "availabilityStatus")
     private AvailabilityStatus availabilityStatus;
 
-    public void checkIfAvailable(){
+    public void setAvailability(){
         if(quantity == 0){
             availabilityStatus = AvailabilityStatus.NOT_AVAILABLE;
         }
