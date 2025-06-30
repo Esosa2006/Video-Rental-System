@@ -3,6 +3,7 @@ package VRS.Video.Rental.System.services.impl;
 import VRS.Video.Rental.System.dtos.VideoRegistrationDto;
 import VRS.Video.Rental.System.entities.Customer;
 import VRS.Video.Rental.System.entities.Video;
+import VRS.Video.Rental.System.exceptions.videoExceptions.VideoAlreadyExistsException;
 import VRS.Video.Rental.System.exceptions.videoExceptions.VideoNotFoundException;
 import VRS.Video.Rental.System.repositories.AvailableVideosRepo;
 import VRS.Video.Rental.System.repositories.CustomerRepository;
@@ -52,6 +53,10 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Video addNewVideo(VideoRegistrationDto videoRegistrationDto) {
+        Video existingVideo = availableVideosRepo.findByName(videoRegistrationDto.getName());
+        if(existingVideo != null){
+            throw new VideoAlreadyExistsException("Video already exists!");
+        }
         Video video = new Video();
         video.setQuantity(videoRegistrationDto.getQuantity());
         video.setName(videoRegistrationDto.getName());
@@ -82,5 +87,10 @@ public class ManagerServiceImpl implements ManagerService {
             availableVideosRepo.delete(video);
         }
         throw new VideoNotFoundException("Video not found");
+    }
+
+    @Override
+    public Video getVideo(String videoName) {
+        return availableVideosRepo.findByName(videoName);
     }
 }

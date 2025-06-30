@@ -1,6 +1,7 @@
 package VRS.Video.Rental.System.services.impl;
 
 import VRS.Video.Rental.System.dtos.CustomerRegistrationDto;
+import VRS.Video.Rental.System.dtos.VideoDto;
 import VRS.Video.Rental.System.entities.Customer;
 import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.enums.AvailabilityStatus;
@@ -10,6 +11,8 @@ import VRS.Video.Rental.System.exceptions.customerExceptions.InsufficientFundsEx
 import VRS.Video.Rental.System.exceptions.videoExceptions.OutOfStockException;
 import VRS.Video.Rental.System.exceptions.videoExceptions.VideoNotFoundException;
 import VRS.Video.Rental.System.mail.EmailSenderService;
+import VRS.Video.Rental.System.mappers.CustomerMapper;
+import VRS.Video.Rental.System.mappers.VideoMapper;
 import VRS.Video.Rental.System.repositories.AvailableVideosRepo;
 import VRS.Video.Rental.System.repositories.CustomerRepository;
 import VRS.Video.Rental.System.repositories.RentedVideosRepo;
@@ -29,14 +32,18 @@ public class CustomerServiceImpl implements CustomerService {
     private final RentedVideosRepo rentedVideosRepo;
     private final StoreService storeService;
     private final EmailSenderService emailSenderService;
+    private final VideoMapper videoMapper;
+    private final CustomerMapper customerMapper;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository, AvailableVideosRepo availableVideosRepo, RentedVideosRepo rentedVideosRepo, StoreService storeService, EmailSenderService emailSenderService) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, AvailableVideosRepo availableVideosRepo, RentedVideosRepo rentedVideosRepo, StoreService storeService, EmailSenderService emailSenderService, VideoMapper videoMapper, CustomerMapper customerMapper) {
         this.customerRepository = customerRepository;
         this.availableVideosRepo = availableVideosRepo;
         this.rentedVideosRepo = rentedVideosRepo;
         this.storeService = storeService;
         this.emailSenderService = emailSenderService;
+        this.videoMapper = videoMapper;
+        this.customerMapper = customerMapper;
     }
 
     @Override
@@ -73,6 +80,7 @@ public class CustomerServiceImpl implements CustomerService {
             video.setQuantity(video.getQuantity() - 1);
             storeService.addStoreFunds(price);
             video.setRented_quantity(rented_qty + 1);
+            video.setAvailability();
         }
         rentedVideosRepo.save(video);
         customerRepository.save(customer);
@@ -81,8 +89,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Video getVideo(String name) {
-        return availableVideosRepo.findByName(name);
+    public VideoDto getVideo(String name) {
+        Video video = availableVideosRepo.findByName(name);
+        return videoMapper.toDto(video);
     }
 
     @Override
@@ -97,17 +106,17 @@ public class CustomerServiceImpl implements CustomerService {
         newCustomer.setFullName(customerRegistrationDto.getFullName());
         newCustomer.setAccount_balance(customerRegistrationDto.getAccount_balance());
         customerRepository.save(newCustomer);
-        emailSenderService.sendEmail(newCustomer.getEmail(),
-                "Welcome!!",
-                "You are now officially a member of this Video Store!");
+//        emailSenderService.sendEmail(newCustomer.getEmail(),
+//                "Welcome!!",
+//                "You are now officially a member of this Video Store!");
 
     }
 
     @Override
-    public Customer viewProfile(String fullName) {
+    public CustomerRegistrationDto viewProfile(String fullName) {
         Customer customer = customerRepository.findByfullName(fullName);
         if(!customer.getFullName().isEmpty()) {
-            return customer;
+            return customerMapper.tDto(customer);
         }
         throw new CustomerNotFoundException("Customer Not Found");
     }

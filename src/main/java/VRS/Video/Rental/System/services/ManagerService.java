@@ -21,4 +21,6 @@ public interface ManagerService{
     ResponseEntity<Video> editVideoDetails(Long id, Map<String, Object> updates);
 
     void deleteVideo(String name);
+
+    Video getVideo(String videoName);
 }

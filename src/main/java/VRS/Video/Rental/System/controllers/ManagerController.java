@@ -47,7 +47,7 @@ public class ManagerController {
 
     @GetMapping("/inventory/video")
     public Video getVideo(@RequestParam (value = "video_name", required = true) String video_name){
-        return customerService.getVideo(video_name);
+        return managerService.getVideo(video_name);
     }
 
     @GetMapping("/inventory/rented")

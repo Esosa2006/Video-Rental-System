@@ -1,6 +1,7 @@
 package VRS.Video.Rental.System.services;
 
 import VRS.Video.Rental.System.dtos.CustomerRegistrationDto;
+import VRS.Video.Rental.System.dtos.VideoDto;
 import VRS.Video.Rental.System.entities.Customer;
 import VRS.Video.Rental.System.entities.Video;
 import org.springframework.data.domain.Page;
@@ -15,9 +16,9 @@ public interface CustomerService {
 
     ResponseEntity<String> rentVideo(String videoName, String name);
 
-    Video getVideo(String name);
+    VideoDto getVideo(String name);
 
     void addNewCustomer(CustomerRegistrationDto customerRegistrationDto);
 
-    Customer viewProfile(String fullName);
+    CustomerRegistrationDto viewProfile(String fullName);
 }

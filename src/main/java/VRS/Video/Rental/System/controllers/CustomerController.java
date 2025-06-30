@@ -1,6 +1,7 @@
 package VRS.Video.Rental.System.controllers;
 
 import VRS.Video.Rental.System.dtos.CustomerRegistrationDto;
+import VRS.Video.Rental.System.dtos.VideoDto;
 import VRS.Video.Rental.System.entities.Customer;
 import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.services.CustomerService;
@@ -27,12 +28,12 @@ public class CustomerController {
     }
 
     @GetMapping("/video")
-    public Video getVideo(@RequestParam (value = "video_name", required = true) String video_name){
+    public VideoDto getVideo(@RequestParam (value = "video_name", required = true) String video_name){
         return customerService.getVideo(video_name);
     }
 
     @GetMapping("/myProfile")
-    public Customer viewProfile(@RequestParam(value = "fullName", required = true) String fullName){
+    public CustomerRegistrationDto viewProfile(@RequestParam(value = "fullName", required = true) String fullName){
         return customerService.viewProfile(fullName);
     }
 
