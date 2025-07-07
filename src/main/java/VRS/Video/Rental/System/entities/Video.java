@@ -31,13 +31,4 @@ public class Video {
     @Transient
     @Column(name = "availabilityStatus")
     private AvailabilityStatus availabilityStatus;
-
-    public void setAvailability(){
-        if(quantity == 0){
-            availabilityStatus = AvailabilityStatus.NOT_AVAILABLE;
-        }
-        else{
-            availabilityStatus = AvailabilityStatus.AVAILABLE;
-        }
-    }
 }

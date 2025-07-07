@@ -1,4 +1,4 @@
-package VRS.Video.Rental.System.dtos;
+package VRS.Video.Rental.System.dtos.video;
 
 import VRS.Video.Rental.System.enums.AvailabilityStatus;
 import lombok.Data;

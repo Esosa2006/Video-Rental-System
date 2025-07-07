@@ -1,27 +1,23 @@
 package VRS.Video.Rental.System.services.impl;
 
-import VRS.Video.Rental.System.dtos.CustomerRegistrationDto;
-import VRS.Video.Rental.System.dtos.VideoDto;
+import VRS.Video.Rental.System.dtos.customer.CustomerRegistrationDto;
+import VRS.Video.Rental.System.dtos.video.RentVideoDto;
 import VRS.Video.Rental.System.entities.Customer;
 import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.enums.AvailabilityStatus;
-import VRS.Video.Rental.System.exceptions.customerExceptions.CustomerAlreadyExistsException;
 import VRS.Video.Rental.System.exceptions.customerExceptions.CustomerNotFoundException;
 import VRS.Video.Rental.System.exceptions.customerExceptions.InsufficientFundsException;
 import VRS.Video.Rental.System.exceptions.videoExceptions.OutOfStockException;
 import VRS.Video.Rental.System.exceptions.videoExceptions.VideoNotFoundException;
 import VRS.Video.Rental.System.mail.EmailSenderService;
 import VRS.Video.Rental.System.mappers.CustomerMapper;
-import VRS.Video.Rental.System.mappers.VideoMapper;
 import VRS.Video.Rental.System.repositories.AvailableVideosRepo;
 import VRS.Video.Rental.System.repositories.CustomerRepository;
 import VRS.Video.Rental.System.repositories.RentedVideosRepo;
 import VRS.Video.Rental.System.services.CustomerService;
 import VRS.Video.Rental.System.services.StoreService;
+import VRS.Video.Rental.System.services.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -32,30 +28,24 @@ public class CustomerServiceImpl implements CustomerService {
     private final RentedVideosRepo rentedVideosRepo;
     private final StoreService storeService;
     private final EmailSenderService emailSenderService;
-    private final VideoMapper videoMapper;
     private final CustomerMapper customerMapper;
+    private final VideoService videoService;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository, AvailableVideosRepo availableVideosRepo, RentedVideosRepo rentedVideosRepo, StoreService storeService, EmailSenderService emailSenderService, VideoMapper videoMapper, CustomerMapper customerMapper) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, AvailableVideosRepo availableVideosRepo, RentedVideosRepo rentedVideosRepo, StoreService storeService, EmailSenderService emailSenderService, CustomerMapper customerMapper, VideoService videoService) {
         this.customerRepository = customerRepository;
         this.availableVideosRepo = availableVideosRepo;
         this.rentedVideosRepo = rentedVideosRepo;
         this.storeService = storeService;
         this.emailSenderService = emailSenderService;
-        this.videoMapper = videoMapper;
         this.customerMapper = customerMapper;
+        this.videoService = videoService;
     }
 
     @Override
-    public Page<Video> getAllVideos(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return availableVideosRepo.findAll(pageable);
-
-    }
-
-    @Override
-    public ResponseEntity<String> rentVideo(String videoName, String name) {
-        Customer customer = customerRepository.findByfullName(name);
+    public ResponseEntity<String> rentVideo(RentVideoDto rentVideoDto, String email) {
+        String videoName = rentVideoDto.getVideoName();
+        Customer customer = customerRepository.findByemail(email);
         if (customer == null) {
             throw new CustomerNotFoundException("Customer not found, Please register.");
         }
@@ -80,7 +70,7 @@ public class CustomerServiceImpl implements CustomerService {
             video.setQuantity(video.getQuantity() - 1);
             storeService.addStoreFunds(price);
             video.setRented_quantity(rented_qty + 1);
-            video.setAvailability();
+            videoService.setAvailability(video);
         }
         rentedVideosRepo.save(video);
         customerRepository.save(customer);
@@ -89,32 +79,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public VideoDto getVideo(String name) {
-        Video video = availableVideosRepo.findByName(name);
-        return videoMapper.toDto(video);
-    }
-
-    @Override
-    public void addNewCustomer(CustomerRegistrationDto customerRegistrationDto) {
-        Customer existingCustomer = customerRepository.findByemail(customerRegistrationDto.getEmail());
-        if(existingCustomer != null){
-            throw new CustomerAlreadyExistsException("Customer already exists!");
-        }
-        Customer newCustomer = new Customer();
-        newCustomer.setAge(customerRegistrationDto.getAge());
-        newCustomer.setEmail(customerRegistrationDto.getEmail());
-        newCustomer.setFullName(customerRegistrationDto.getFullName());
-        newCustomer.setAccount_balance(customerRegistrationDto.getAccount_balance());
-        customerRepository.save(newCustomer);
-//        emailSenderService.sendEmail(newCustomer.getEmail(),
-//                "Welcome!!",
-//                "You are now officially a member of this Video Store!");
-
-    }
-
-    @Override
-    public CustomerRegistrationDto viewProfile(String fullName) {
-        Customer customer = customerRepository.findByfullName(fullName);
+    public CustomerRegistrationDto viewProfile(String email) {
+        Customer customer = customerRepository.findByemail(email);
         if(!customer.getFullName().isEmpty()) {
             return customerMapper.tDto(customer);
         }

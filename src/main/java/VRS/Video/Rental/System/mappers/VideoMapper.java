@@ -1,6 +1,6 @@
 package VRS.Video.Rental.System.mappers;
 
-import VRS.Video.Rental.System.dtos.VideoDto;
+import VRS.Video.Rental.System.dtos.video.VideoDto;
 import VRS.Video.Rental.System.entities.Video;
 import org.springframework.stereotype.Component;
 

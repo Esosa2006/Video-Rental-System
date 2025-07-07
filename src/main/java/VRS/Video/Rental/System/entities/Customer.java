@@ -1,9 +1,7 @@
 package VRS.Video.Rental.System.entities;
 
+import VRS.Video.Rental.System.enums.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,5 +28,8 @@ public class Customer {
     private Integer age;
     @Column(name = "account_balance")
     private Integer account_balance;
-
+    @Column(name = "password")
+    private String password;
+    @Column(name = "role")
+    private Role role;
 }

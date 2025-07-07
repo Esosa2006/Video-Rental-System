@@ -1,4 +1,4 @@
-package VRS.Video.Rental.System.dtos;
+package VRS.Video.Rental.System.dtos.video;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

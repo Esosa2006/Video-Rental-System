@@ -1,6 +1,6 @@
 package VRS.Video.Rental.System.services.impl;
 
-import VRS.Video.Rental.System.dtos.VideoRegistrationDto;
+import VRS.Video.Rental.System.dtos.video.VideoRegistrationDto;
 import VRS.Video.Rental.System.entities.Customer;
 import VRS.Video.Rental.System.entities.Video;
 import VRS.Video.Rental.System.exceptions.videoExceptions.VideoAlreadyExistsException;
@@ -10,6 +10,7 @@ import VRS.Video.Rental.System.repositories.CustomerRepository;
 import VRS.Video.Rental.System.repositories.RentedVideosRepo;
 import VRS.Video.Rental.System.services.ManagerService;
 import VRS.Video.Rental.System.services.StoreService;
+import VRS.Video.Rental.System.services.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,13 +27,15 @@ public class ManagerServiceImpl implements ManagerService {
     private final RentedVideosRepo rentedVideosRepo;
     private final AvailableVideosRepo availableVideosRepo;
     private final StoreService storeService;
+    private final VideoService videoService;
 
     @Autowired
-    public ManagerServiceImpl(CustomerRepository customerRepository, RentedVideosRepo rentedVideosRepo, AvailableVideosRepo availableVideosRepo, StoreService storeService) {
+    public ManagerServiceImpl(CustomerRepository customerRepository, RentedVideosRepo rentedVideosRepo, AvailableVideosRepo availableVideosRepo, StoreService storeService, VideoService videoService) {
         this.customerRepository = customerRepository;
         this.rentedVideosRepo = rentedVideosRepo;
         this.availableVideosRepo = availableVideosRepo;
         this.storeService = storeService;
+        this.videoService = videoService;
     }
 
     @Override
@@ -52,7 +55,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Video addNewVideo(VideoRegistrationDto videoRegistrationDto) {
+    public Video addNewVideo(VideoRegistrationDto videoRegistrationDto, String managerName) {
         Video existingVideo = availableVideosRepo.findByName(videoRegistrationDto.getName());
         if(existingVideo != null){
             throw new VideoAlreadyExistsException("Video already exists!");
@@ -61,7 +64,7 @@ public class ManagerServiceImpl implements ManagerService {
         video.setQuantity(videoRegistrationDto.getQuantity());
         video.setName(videoRegistrationDto.getName());
         video.setPrice(videoRegistrationDto.getPrice());
-        video.setAvailability();
+        videoService.setAvailability(video);
         return availableVideosRepo.save(video);
     }
 
@@ -87,10 +90,5 @@ public class ManagerServiceImpl implements ManagerService {
             availableVideosRepo.delete(video);
         }
         throw new VideoNotFoundException("Video not found");
-    }
-
-    @Override
-    public Video getVideo(String videoName) {
-        return availableVideosRepo.findByName(videoName);
     }
 }

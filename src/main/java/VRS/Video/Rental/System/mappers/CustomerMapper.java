@@ -1,6 +1,6 @@
 package VRS.Video.Rental.System.mappers;
 
-import VRS.Video.Rental.System.dtos.CustomerRegistrationDto;
+import VRS.Video.Rental.System.dtos.customer.CustomerRegistrationDto;
 import VRS.Video.Rental.System.entities.Customer;
 import org.springframework.stereotype.Component;
 
